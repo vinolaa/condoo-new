@@ -6,15 +6,7 @@ import { mockAmbientes } from "@/components/dashboard/ambientes/ambiente-data"
 
 import AmbienteTable from "@/components/dashboard/ambientes/AmbienteTable"
 import AmbienteModal from "@/components/dashboard/ambientes/AmbienteModal"
-
-import {
-    Dialog,
-    DialogContent,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
-} from "@/components/ui/dialog"
-import { Button } from "@/components/ui/button"
+import DeleteConfirmDialog from "@/components/dashboard/ambientes/DeleteConfirmDialog"
 
 export default function AmbientesPage() {
     const [ambientes, setAmbientes] = useState<Ambiente[]>(mockAmbientes)
@@ -91,39 +83,17 @@ export default function AmbientesPage() {
                 }}
             />
 
-            {/* Modal de Confirmação de Exclusão */}
-            <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-                <DialogContent className="sm:max-w-md">
-                    <DialogHeader>
-                        <DialogTitle>Confirmar Exclusão</DialogTitle>
-                    </DialogHeader>
-                    <p className="text-sm text-muted-foreground">
-                        Tem certeza que deseja excluir o ambiente{" "}
-                        <span className="font-semibold">{ambienteToDelete?.nome}</span>?
-                    </p>
-                    <DialogFooter className="pt-4">
-                        <Button
-                            variant="ghost"
-                            onClick={() => {
-                                setDeleteDialogOpen(false)
-                                setAmbienteToDelete(null)
-                            }}
-                        >
-                            Cancelar
-                        </Button>
-                        <Button
-                            variant="destructive"
-                            onClick={() => {
-                                if (ambienteToDelete) {
-                                    deleteAmbiente(ambienteToDelete.id)
-                                }
-                            }}
-                        >
-                            Confirmar Exclusão
-                        </Button>
-                    </DialogFooter>
-                </DialogContent>
-            </Dialog>
+            <DeleteConfirmDialog
+                open={deleteDialogOpen}
+                ambiente={ambienteToDelete}
+                onCloseAction={() => {
+                    setDeleteDialogOpen(false)
+                    setAmbienteToDelete(null)
+                }}
+                onConfirmAction={(id) => {
+                    deleteAmbiente(id)
+                }}
+            />
         </div>
     )
 }
