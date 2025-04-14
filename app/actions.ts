@@ -28,6 +28,9 @@ export const signUpAction = async (formData: FormData) => {
   });
 
   if (error) {
+    if (error.message.includes("Email already registered")) {
+      return encodedRedirect("error", "/sign-up", "Email already registered");
+    }
     console.error(error.code + " " + error.message);
     return encodedRedirect("error", "/sign-up", error.message);
   } else {
@@ -44,7 +47,7 @@ export const signInAction = async (formData: FormData) => {
   const password = formData.get("password") as string;
   const supabase = await createClient();
 
-  const { error } = await supabase.auth.signInWithPassword({
+  const { error, data } = await supabase.auth.signInWithPassword({
     email,
     password,
   });
@@ -53,7 +56,11 @@ export const signInAction = async (formData: FormData) => {
     return encodedRedirect("error", "/sign-in", error.message);
   }
 
-  return redirect("/protected");
+  if (data && !data.user.email_confirmed_at) {
+    return encodedRedirect("error", "/sign-in", "Please confirm your email before signing in.");
+  }
+
+  return redirect("/preview");
 };
 
 export const forgotPasswordAction = async (formData: FormData) => {
@@ -72,11 +79,7 @@ export const forgotPasswordAction = async (formData: FormData) => {
 
   if (error) {
     console.error(error.message);
-    return encodedRedirect(
-      "error",
-      "/forgot-password",
-      "Could not reset password",
-    );
+    return encodedRedirect("error", "/forgot-password", error.message || "Could not reset password");
   }
 
   if (callbackUrl) {

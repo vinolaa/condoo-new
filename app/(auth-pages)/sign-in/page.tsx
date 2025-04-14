@@ -1,44 +1,100 @@
-import { signInAction } from "@/app/actions";
-import { FormMessage, Message } from "@/components/form-message";
-import { SubmitButton } from "@/components/submit-button";
+'use client';
+
+import { useSearchParams } from "next/navigation";
+import { SubmitButton } from "@/components/auth/submit-button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
+import { motion } from "framer-motion";
+import { signInAction } from "@/app/actions";
+import React from "react"; // Importar o signInAction
 
-export default async function Login(props: { searchParams: Promise<Message> }) {
-  const searchParams = await props.searchParams;
-  return (
-    <form className="flex-1 flex flex-col min-w-64">
-      <h1 className="text-2xl font-medium">Sign in</h1>
-      <p className="text-sm text-foreground">
-        Don't have an account?{" "}
-        <Link className="text-foreground font-medium underline" href="/sign-up">
-          Sign up
-        </Link>
-      </p>
-      <div className="flex flex-col gap-2 [&>input]:mb-3 mt-8">
-        <Label htmlFor="email">Email</Label>
-        <Input name="email" placeholder="you@example.com" required />
-        <div className="flex justify-between items-center">
-          <Label htmlFor="password">Password</Label>
-          <Link
-            className="text-xs text-foreground underline"
-            href="/forgot-password"
-          >
-            Forgot Password?
-          </Link>
-        </div>
-        <Input
-          type="password"
-          name="password"
-          placeholder="Your password"
-          required
-        />
-        <SubmitButton pendingText="Signing In..." formAction={signInAction}>
-          Sign in
-        </SubmitButton>
-        <FormMessage message={searchParams} />
-      </div>
-    </form>
-  );
+export default function Login() {
+    const searchParams = useSearchParams();
+
+    const success = searchParams.get("success");
+    const error = searchParams.get("error");
+    const message = searchParams.get("message");
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        const formData = new FormData(e.target as HTMLFormElement);
+        await signInAction(formData); // Enviar os dados para o signInAction
+    };
+
+    return (
+        <section className="w-full min-h-screen flex items-center justify-center bg-background">
+            <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6 }}
+                className="w-full max-w-md p-8 rounded-2xl shadow-lg bg-card border border-border"
+            >
+                <form className="flex flex-col gap-6" onSubmit={handleSubmit}>
+                    <div className="text-center space-y-1">
+                        <h1 className="text-3xl font-bold tracking-tight text-foreground">
+                            Bem-vindo de volta
+                        </h1>
+                        <p className="text-sm text-muted-foreground">
+                            Acesse sua conta para continuar
+                        </p>
+                    </div>
+
+                    <div className="space-y-4">
+                        <div className="flex flex-col gap-1">
+                            <Label htmlFor="email">Email</Label>
+                            <Input name="email" placeholder="you@example.com" required />
+                        </div>
+                        <div className="flex flex-col gap-1">
+                            <div className="flex justify-between items-center">
+                                <Label htmlFor="password">Senha</Label>
+                                <Link
+                                    href="/forgot-password"
+                                    className="text-xs text-muted-foreground hover:underline"
+                                >
+                                    Esqueceu a senha?
+                                </Link>
+                            </div>
+                            <Input
+                                type="password"
+                                name="password"
+                                placeholder="••••••••"
+                                required
+                            />
+                        </div>
+                    </div>
+
+                    {/* Mensagens inline */}
+                    {(success || error || message) && (
+                        <div className="flex flex-col gap-2 text-sm">
+                            {success && (
+                                <div className="text-foreground border-l-2 border-foreground px-4 py-2 rounded bg-green-100/10">
+                                    {success}
+                                </div>
+                            )}
+                            {error && (
+                                <div className="text-destructive-foreground border-l-2 border-destructive px-4 py-2 rounded bg-red-100/10">
+                                    {error}
+                                </div>
+                            )}
+                            {message && (
+                                <div className="text-foreground border-l-2 border-muted px-4 py-2 rounded bg-muted/10">
+                                    {message}
+                                </div>
+                            )}
+                        </div>
+                    )}
+
+                    <SubmitButton pendingText="Entrando...">Entrar</SubmitButton>
+
+                    <p className="text-sm text-muted-foreground text-center">
+                        Não tem uma conta?{" "}
+                        <Link href="/sign-up" className="text-foreground underline">
+                            Cadastre-se
+                        </Link>
+                    </p>
+                </form>
+            </motion.div>
+        </section>
+    );
 }
