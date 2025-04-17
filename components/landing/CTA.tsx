@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/button"
 import { motion } from "framer-motion"
 import { ArrowRight } from "lucide-react"
+import Link from "next/link";
 
 export default function CallToAction() {
     return (
@@ -29,10 +30,12 @@ export default function CallToAction() {
                     whileInView={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.7 }}
                 >
-                    <Button size="lg" className="text-black bg-white hover:bg-white">
-                        Criar conta agora
-                        <ArrowRight className="ml-2 h-5 w-5" />
-                    </Button>
+                    <Link href="/sign-up">
+                        <Button size="lg" className="text-black bg-white hover:bg-white">
+                            Criar conta agora
+                            <ArrowRight className="ml-2 h-5 w-5" />
+                        </Button>
+                    </Link>
                 </motion.div>
             </div>
         </section>

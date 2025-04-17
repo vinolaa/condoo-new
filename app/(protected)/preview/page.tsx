@@ -1,6 +1,7 @@
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 
 export default async function PreviewPage() {
     const supabase = await createClient();
@@ -23,22 +24,45 @@ export default async function PreviewPage() {
     }
 
     if (usuario.cargo === "sindico") {
-        // Redireciona se já tiver cargo atribuído
         redirect("/dashboard");
     }
 
     return (
-        <div className="p-8 max-w-xl mx-auto space-y-6">
-            <h1 className="text-2xl font-bold text-foreground">Bem-vindo, {usuario.nome}</h1>
+        <div className="w-full min-h-screen flex items-center justify-center px-4 py-20">
+            <div className="w-full max-w-2xl space-y-10">
+                <div className="text-center space-y-2">
+                    <h1 className="text-3xl font-bold">Como deseja começar?</h1>
+                    <p className="text-muted-foreground">
+                        Este sistema é 100% gratuito. Escolha se deseja entrar em um condomínio já existente ou criar o seu próprio como síndico.
+                    </p>
+                </div>
 
-            <div className="space-y-2 text-muted-foreground">
-                <p><strong>Email:</strong> {usuario.email}</p>
-                <p><strong>Cargo atual:</strong> {usuario.cargo}</p>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <Card className="hover:shadow-lg transition-shadow">
+                        <CardHeader>
+                            <CardTitle>Entrar em um condomínio</CardTitle>
+                            <CardDescription>Já existe um condomínio criado? Solicite acesso.</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <form action="/entrar-condominio">
+                                <Button className="w-full" type="submit">Entrar</Button>
+                            </form>
+                        </CardContent>
+                    </Card>
+
+                    <Card className="hover:shadow-lg transition-shadow">
+                        <CardHeader>
+                            <CardTitle>Criar um condomínio</CardTitle>
+                            <CardDescription>Deseja ser síndico e iniciar a gestão do seu prédio?</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <form action="/criar-condominio">
+                                <Button className="w-full" type="submit">Criar</Button>
+                            </form>
+                        </CardContent>
+                    </Card>
+                </div>
             </div>
-
-            <form action="/planos-sindico">
-                <Button type="submit">Ver planos síndico</Button>
-            </form>
         </div>
     );
 }

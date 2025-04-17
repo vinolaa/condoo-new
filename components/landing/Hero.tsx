@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/button"
 import { ArrowRight } from "lucide-react"
 import { motion } from "framer-motion"
+import Link from "next/link";
 
 export default function Hero() {
   return (
@@ -21,10 +22,12 @@ export default function Hero() {
               Controle financeiro e reservas de ambientes em um só lugar. Tenha mais organização, menos dor de cabeça.
             </p>
             <div className="flex justify-center gap-4">
-              <Button size="lg">
-                Comece gratuitamente
-                <ArrowRight className="ml-2 h-5 w-5" />
-              </Button>
+              <Link href="/sign-in">
+                <Button size="lg">
+                  Comece agora
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Button>
+              </Link>
             </div>
           </motion.div>
         </div>

@@ -1,26 +1,47 @@
 'use client';
 
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import { SubmitButton } from "@/components/auth/submit-button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { signInAction } from "@/app/actions";
-import React from "react"; // Importar o signInAction
+import { createClient } from "@/utils/supabase/client";
+import React from "react";
 
 export default function Login() {
     const searchParams = useSearchParams();
+    const router = useRouter();
+    const supabase = createClient();
 
     const success = searchParams.get("success");
     const error = searchParams.get("error");
     const message = searchParams.get("message");
 
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const checkUser = async () => {
+            const { data: { user } } = await supabase.auth.getUser();
+            if (user) {
+                router.replace("/preview");
+            } else {
+                setLoading(false); // Libera o render da tela de login
+            }
+        };
+
+        checkUser();
+    }, [supabase, router]);
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         const formData = new FormData(e.target as HTMLFormElement);
-        await signInAction(formData); // Enviar os dados para o signInAction
+        await signInAction(formData);
     };
+
+    if (loading) return null; // Enquanto verifica o usuário, não renderiza nada
 
     return (
         <section className="w-full min-h-screen flex items-center justify-center bg-background">
@@ -64,7 +85,6 @@ export default function Login() {
                         </div>
                     </div>
 
-                    {/* Mensagens inline */}
                     {(success || error || message) && (
                         <div className="flex flex-col gap-2 text-sm">
                             {success && (

@@ -1,0 +1,47 @@
+export const extratoMoradorMock = [
+    {
+        id: 1,
+        morador: "João da Silva",
+        descricao: "Pagamento de aluguel",
+        tipo: "entrada",
+        valor: 1500,
+        data: "2025-04-01",
+        categoria: "Aluguel",
+    },
+    {
+        id: 2,
+        morador: "João da Silva",
+        descricao: "Manutenção elétrica",
+        tipo: "saida",
+        valor: 200,
+        data: "2025-04-05",
+        categoria: "Manutenção",
+    },
+    {
+        id: 3,
+        morador: "Maria Oliveira",
+        descricao: "Pagamento de aluguel",
+        tipo: "entrada",
+        valor: 1500,
+        data: "2025-04-01",
+        categoria: "Aluguel",
+    },
+    {
+        id: 4,
+        morador: "Maria Oliveira",
+        descricao: "Conserto de vazamento",
+        tipo: "saida",
+        valor: 150,
+        data: "2025-04-07",
+        categoria: "Manutenção",
+    },
+    {
+        id: 5,
+        morador: "Carlos Souza",
+        descricao: "Pagamento de aluguel",
+        tipo: "entrada",
+        valor: 1500,
+        data: "2025-04-01",
+        categoria: "Aluguel",
+    }
+]
