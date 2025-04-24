@@ -17,7 +17,6 @@ export default function LancamentosPage() {
     const [selected, setSelected] = useState<Lancamento | null>(null);
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
-    // Função para salvar os lançamentos
     const handleSave = (data: Omit<Lancamento, "id"> | Lancamento) => {
         if ("id" in data) {
             setLancamentos((prev) => prev.map((l) => (l.id === data.id ? data : l)));
@@ -30,13 +29,11 @@ export default function LancamentosPage() {
         setModalOpen(false);
     };
 
-    // Função para deletar um lançamento
     const handleDelete = (id: string) => {
         setLancamentos((prev) => prev.filter((l) => l.id !== id));
         setDeleteDialogOpen(false);
     };
 
-    // Processando os dados para o gráfico
     const totalEntradas = lancamentos.filter(lanc => lanc.tipo === "entrada").reduce((acc, curr) => acc + curr.valor, 0);
     const totalSaidas = lancamentos.filter(lanc => lanc.tipo === "saida").reduce((acc, curr) => acc + curr.valor, 0);
 
@@ -161,7 +158,7 @@ export default function LancamentosPage() {
 
             <DeleteConfirmDialog
                 open={deleteDialogOpen}
-                ambiente={selected as any} // compatibilidade temporária
+                ambiente={selected as any}
                 onCloseAction={() => setDeleteDialogOpen(false)}
                 onConfirmAction={handleDelete}
             />

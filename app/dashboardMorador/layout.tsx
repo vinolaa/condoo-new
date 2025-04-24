@@ -1,5 +1,5 @@
 
-import { Sidebar } from "@/components/dashboard/Sidebar"
+import { SidebarMorador } from "@/components/dashboard/SideBarMorador"
 import React from "react";
 import { createClient } from "@/utils/supabase/server";
 import {redirect} from "next/navigation";
@@ -21,19 +21,19 @@ export default async function DashboardLayout({children}: { children: React.Reac
         .eq("id", user.id)
         .single();
 
-    if (usuario?.cargo === "morador") {
-        redirect("/dashboardMorador");
+    if (usuario?.cargo === "sindico") {
+        redirect("/dashboard");
     }
 
     // Se der erro ou não for síndico, redireciona pra home ou outra rota apropriada
-    if (error || usuario?.cargo !== "sindico") {
+    if (error || usuario?.cargo !== "morador") {
         redirect("/");
     }
 
 
     return (
         <div className="flex">
-            <Sidebar/>
+            <SidebarMorador/>
             <main className="flex-1 p-6 bg-muted/40 min-h-screen">
                 {children}
             </main>

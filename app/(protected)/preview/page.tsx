@@ -2,6 +2,7 @@ import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import EntrarCondominioModal from "@/components/preview/EntrarCondominioModal";
 
 export default async function PreviewPage() {
     const supabase = await createClient();
@@ -15,7 +16,7 @@ export default async function PreviewPage() {
 
     const { data: usuario, error } = await supabase
         .from("usuarios")
-        .select("cargo, nome, email")
+        .select("id, cargo, nome, email, condominio_id")
         .eq("id", user.id)
         .single();
 
@@ -23,7 +24,7 @@ export default async function PreviewPage() {
         return <div className="p-4">Erro ao buscar dados do usuário.</div>;
     }
 
-    if (usuario.cargo === "sindico") {
+    if (usuario.cargo === "sindico" && usuario.condominio_id !== null) {
         redirect("/dashboard");
     }
 
@@ -44,9 +45,7 @@ export default async function PreviewPage() {
                             <CardDescription>Já existe um condomínio criado? Solicite acesso.</CardDescription>
                         </CardHeader>
                         <CardContent>
-                            <form action="/entrar-condominio">
-                                <Button className="w-full" type="submit">Entrar</Button>
-                            </form>
+                            <EntrarCondominioModal usuarioId={usuario.id} />
                         </CardContent>
                     </Card>
 
@@ -56,7 +55,7 @@ export default async function PreviewPage() {
                             <CardDescription>Deseja ser síndico e iniciar a gestão do seu prédio?</CardDescription>
                         </CardHeader>
                         <CardContent>
-                            <form action="/criar-condominio">
+                            <form action="/preview/criar-condominio">
                                 <Button className="w-full" type="submit">Criar</Button>
                             </form>
                         </CardContent>

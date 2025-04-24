@@ -24,7 +24,6 @@ export default function ComprovantesNF() {
     const [filtroTipo, setFiltroTipo] = useState<string>("todos")
 
     useEffect(() => {
-        // Carregar todos os comprovantes do mock
         setComprovantes(comprovantesMock)
     }, [])
 

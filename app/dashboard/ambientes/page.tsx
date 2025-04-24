@@ -1,99 +1,53 @@
-"use client"
+import { createClient } from "@/utils/supabase/server";
+import { Ambiente } from "@/app/types/ambiente";
+import { AmbientesClient } from "@/components/dashboard/ambientes/AmbientesClient";
+import { redirect } from "next/navigation";
 
-import { useState } from "react"
-import { Ambiente } from "@/app/types/ambiente"
-import { mockAmbientes } from "@/components/dashboard/ambientes/ambiente-data"
+export default async function AmbientesPage() {
+    const supabase = await createClient();
 
-import AmbienteTable from "@/components/dashboard/ambientes/AmbienteTable"
-import AmbienteModal from "@/components/dashboard/ambientes/AmbienteModal"
-import DeleteConfirmDialog from "@/components/dashboard/ambientes/DeleteConfirmDialog"
+    // Obter o usuário logado
+    const {
+        data: { user },
+    } = await supabase.auth.getUser();
 
-export default function AmbientesPage() {
-    const [ambientes, setAmbientes] = useState<Ambiente[]>(mockAmbientes)
-    const [editing, setEditing] = useState<Ambiente | null>(null)
-    const [open, setOpen] = useState(false)
-
-    const [ambienteToDelete, setAmbienteToDelete] = useState<Ambiente | null>(null)
-    const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
-
-    const addAmbiente = (ambiente: Omit<Ambiente, "id">) => {
-        const newAmbiente: Ambiente = {
-            ...ambiente,
-            id: Date.now().toString(),
-        }
-        setAmbientes((prev) => [...prev, newAmbiente])
+    if (!user) {
+        // Se o usuário não estiver logado, redirecionar para a página de login
+        redirect("/sign-in");
     }
 
-    const updateAmbiente = (updated: Ambiente) => {
-        setAmbientes((prev) =>
-            prev.map((a) => (a.id === updated.id ? updated : a))
-        )
+    // Buscar o condominio_id do usuário logado
+    const { data: usuarioData, error: userError } = await supabase
+        .from("usuarios")
+        .select("condominio_id")
+        .eq("id", user.id)
+        .single();
+
+    if (userError || !usuarioData) {
+        console.error("Erro ao buscar dados do usuário:", userError?.message);
+        return <div>Erro ao carregar dados do usuário.</div>;
     }
 
-    const deleteAmbiente = (id: string) => {
-        setAmbientes((prev) => prev.filter((a) => a.id !== id))
-        setDeleteDialogOpen(false)
-        setAmbienteToDelete(null)
+    const { condominio_id } = usuarioData;
+
+    // Buscar ambientes que pertencem ao mesmo condomínio do usuário síndico
+    const { data, error } = await supabase
+        .from("ambientes")
+        .select("*")
+        .eq("condominio_id", condominio_id);
+
+    if (error) {
+        console.error("Erro ao buscar ambientes:", error.message);
+        return <div>Erro ao carregar os ambientes.</div>;
     }
 
-    const handleCloseModal = () => {
-        setOpen(false)
-        setEditing(null)
-    }
+    // Mapear os dados dos ambientes para o tipo Ambiente
+    const ambientes: Ambiente[] = data?.map((item) => ({
+        id: item.id,
+        nome: item.nome,
+        valorPorDia: item.valor_por_dia,
+        condominio_id: item.condominio_id
+    })) || [];
 
-    return (
-        <div className="space-y-6">
-            <div className="flex justify-between items-center">
-                <h1 className="text-2xl font-bold">Ambientes</h1>
-                <button
-                    onClick={() => {
-                        setEditing(null)
-                        setOpen(true)
-                    }}
-                    className="bg-primary text-white px-4 py-2 rounded"
-                >
-                    Novo Ambiente
-                </button>
-            </div>
-
-            <AmbienteTable
-                ambientes={ambientes}
-                onEdit={(ambiente) => {
-                    setEditing(ambiente)
-                    setOpen(true)
-                }}
-                onDelete={(ambiente) => {
-                    setAmbienteToDelete(ambiente)
-                    setDeleteDialogOpen(true)
-                }}
-            />
-
-            <AmbienteModal
-                open={open}
-                ambiente={editing}
-                onCloseAction={handleCloseModal}
-                clearEdit={() => setEditing(null)}
-                onSaveAction={(data) => {
-                    if ("id" in data) {
-                        updateAmbiente(data)
-                    } else {
-                        addAmbiente(data)
-                    }
-                    handleCloseModal()
-                }}
-            />
-
-            <DeleteConfirmDialog
-                open={deleteDialogOpen}
-                ambiente={ambienteToDelete}
-                onCloseAction={() => {
-                    setDeleteDialogOpen(false)
-                    setAmbienteToDelete(null)
-                }}
-                onConfirmAction={(id) => {
-                    deleteAmbiente(id)
-                }}
-            />
-        </div>
-    )
+    return <AmbientesClient ambientes={ambientes} />;
 }

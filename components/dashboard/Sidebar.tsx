@@ -1,6 +1,13 @@
 "use client"
 
-import { Home, Building2, ChevronDown, ChevronRight, Banknote } from "lucide-react"
+import {
+    Home,
+    Building2,
+    ChevronDown,
+    ChevronRight,
+    Banknote,
+    Mail
+} from "lucide-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import clsx from "clsx"
@@ -26,54 +33,71 @@ export function Sidebar() {
     )
 
     return (
-        <aside className="w-60 border-r h-screen p-4 bg-white dark:bg-zinc-950">
-            <div className="text-lg font-bold mb-6">Painel do Síndico</div>
-            <nav className="space-y-1">
-                {links.map(link => (
-                    <Link
-                        key={link.href}
-                        href={link.href}
+        <aside className="w-60 border-r h-screen flex flex-col justify-between p-4 bg-white dark:bg-zinc-950">
+            {/* Parte de cima: título + navegação */}
+            <div>
+                <div className="text-lg font-bold mb-6">Painel do Síndico</div>
+                <nav className="space-y-1">
+                    {links.map(link => (
+                        <Link
+                            key={link.href}
+                            href={link.href}
+                            className={clsx(
+                                "flex items-center gap-2 px-3 py-2 rounded-md hover:bg-muted transition-all",
+                                pathname === link.href && "bg-muted font-medium"
+                            )}
+                        >
+                            {link.icon}
+                            {link.label}
+                        </Link>
+                    ))}
+
+                    <button
+                        onClick={() => setFinanceiroOpen(prev => !prev)}
                         className={clsx(
-                            "flex items-center gap-2 px-3 py-2 rounded-md hover:bg-muted transition-all",
-                            pathname === link.href && "bg-muted font-medium"
+                            "flex items-center justify-between w-full px-3 py-2 rounded-md hover:bg-muted transition-all",
+                            pathname?.startsWith("/dashboard/financeiro") && "bg-muted font-medium"
                         )}
                     >
-                        {link.icon}
-                        {link.label}
-                    </Link>
-                ))}
+            <span className="flex items-center gap-2">
+              <Banknote size={18} />
+              Financeiro
+            </span>
+                        {financeiroOpen ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
+                    </button>
 
-                <button
-                    onClick={() => setFinanceiroOpen(prev => !prev)}
+                    {financeiroOpen && (
+                        <div className="ml-6 space-y-1">
+                            {financeiroLinks.map(link => (
+                                <Link
+                                    key={link.href}
+                                    href={link.href}
+                                    className={clsx(
+                                        "block text-sm px-3 py-1 rounded hover:bg-muted",
+                                        pathname === link.href && "bg-muted font-semibold"
+                                    )}
+                                >
+                                    {link.label}
+                                </Link>
+                            ))}
+                        </div>
+                    )}
+                </nav>
+            </div>
+
+            {/* Parte de baixo: botão fixo para solicitações */}
+            <div className="mt-4 pt-4 border-t">
+                <Link
+                    href="/dashboard/solicitacoes"
                     className={clsx(
-                        "flex items-center justify-between w-full px-3 py-2 rounded-md hover:bg-muted transition-all",
-                        pathname?.startsWith("/dashboard/financeiro") && "bg-muted font-medium"
+                        "flex items-center gap-2 px-3 py-2 rounded-md hover:bg-muted transition-all",
+                        pathname === "/dashboard/solicitacoes" && "bg-muted font-medium"
                     )}
                 >
-          <span className="flex items-center gap-2">
-            <Banknote size={18} />
-            Financeiro
-          </span>
-                    {financeiroOpen ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
-                </button>
-
-                {financeiroOpen && (
-                    <div className="ml-6 space-y-1">
-                        {financeiroLinks.map(link => (
-                            <Link
-                                key={link.href}
-                                href={link.href}
-                                className={clsx(
-                                    "block text-sm px-3 py-1 rounded hover:bg-muted",
-                                    pathname === link.href && "bg-muted font-semibold"
-                                )}
-                            >
-                                {link.label}
-                            </Link>
-                        ))}
-                    </div>
-                )}
-            </nav>
+                    <Mail size={18} />
+                    Solicitações
+                </Link>
+            </div>
         </aside>
     )
 }

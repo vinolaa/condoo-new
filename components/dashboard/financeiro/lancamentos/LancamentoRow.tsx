@@ -1,4 +1,3 @@
-// components/dashboard/financeiro/lancamentos/LancamentoRow.tsx
 import { Button } from "@/components/ui/button"
 import { Trash, Pencil } from "lucide-react"
 import { Lancamento } from "@/app/types/lancamento"

@@ -28,7 +28,7 @@ export default function Login() {
             if (user) {
                 router.replace("/preview");
             } else {
-                setLoading(false); // Libera o render da tela de login
+                setLoading(false);
             }
         };
 
@@ -41,7 +41,7 @@ export default function Login() {
         await signInAction(formData);
     };
 
-    if (loading) return null; // Enquanto verifica o usuário, não renderiza nada
+    if (loading) return null;
 
     return (
         <section className="w-full min-h-screen flex items-center justify-center bg-background">

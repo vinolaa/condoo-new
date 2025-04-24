@@ -1,7 +1,7 @@
 export type Lancamento = {
     id: string
     tipo: "entrada" | "saida"
-    data: string // YYYY-MM-DD
+    data: string
     valor: number
     descricao: string
     morador: string | null
