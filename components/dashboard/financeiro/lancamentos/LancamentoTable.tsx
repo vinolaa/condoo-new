@@ -1,3 +1,5 @@
+// components/dashboard/financeiro/lancamentos/LancamentoTable.tsx
+
 import { Table, TableBody, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Card, CardContent } from "@/components/ui/card"
 import { Lancamento } from "@/app/types/lancamento"
@@ -26,9 +28,21 @@ export default function LancamentoTable({ lancamentos, onEdit, onDelete }: Props
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {lancamentos.map((l) => (
-                            <LancamentoRow key={l.id} lancamento={l} onEdit={onEdit} onDelete={onDelete} />
+                        {lancamentos.map((lanc) => (
+                            <LancamentoRow
+                                key={lanc.id}
+                                lancamento={lanc}
+                                onEdit={onEdit}
+                                onDelete={onDelete}
+                            />
                         ))}
+                        {lancamentos.length === 0 && (
+                            <TableRow>
+                                <td colSpan={7} className="text-center py-4 text-muted-foreground">
+                                    Nenhum lançamento encontrado.
+                                </td>
+                            </TableRow>
+                        )}
                     </TableBody>
                 </Table>
             </CardContent>

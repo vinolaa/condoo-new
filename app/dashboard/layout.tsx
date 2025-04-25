@@ -34,7 +34,7 @@ export default async function DashboardLayout({children}: { children: React.Reac
     return (
         <div className="flex">
             <Sidebar/>
-            <main className="flex-1 p-6 bg-muted/40 min-h-screen">
+            <main className="flex-1 h-screen overflow-y-auto p-6 bg-muted/40">
                 {children}
             </main>
         </div>
