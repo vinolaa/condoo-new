@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -8,6 +8,7 @@ import { Plus } from 'lucide-react'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { createClient } from '@/utils/supabase/client'
+import { v4 as uuidv4 } from 'uuid'
 
 interface Props {
     condominioId: string
@@ -24,6 +25,7 @@ export default function CriarLancamentoModal({ condominioId, usuarioId }: Props)
         data: '',
         usuario_id: '',
     })
+    const [comprovante, setComprovante] = useState<File | null>(null)
 
     const supabase = createClient()
 
@@ -52,11 +54,44 @@ export default function CriarLancamentoModal({ condominioId, usuarioId }: Props)
         setForm({ ...form, [field]: value })
     }
 
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0]
+        if (file && file.type === 'application/pdf') {
+            setComprovante(file)
+        } else {
+            alert('Por favor, selecione um arquivo PDF válido.')
+            setComprovante(null)
+        }
+    }
+
     const salvarLancamento = async () => {
+        if (!comprovante) {
+            alert('É obrigatório enviar o comprovante em PDF.')
+            return
+        }
+
+        const uuid = uuidv4()
+        const filePath = `${condominioId}/${uuid}.pdf`
+
+        // Upload do PDF
+        const { error: uploadError } = await supabase.storage
+            .from('comprovantes')
+            .upload(filePath, comprovante, {
+                cacheControl: '3600',
+                upsert: false,
+            })
+
+        if (uploadError) {
+            alert('Erro ao fazer upload do comprovante: ' + uploadError.message)
+            return
+        }
+
+        // Salva no banco
         const payload = {
             ...form,
             condominio_id: condominioId,
             valor: parseFloat(form.valor),
+            comprovante: filePath,
         }
 
         const { error } = await supabase.from('lancamentos').insert(payload)
@@ -84,11 +119,9 @@ export default function CriarLancamentoModal({ condominioId, usuarioId }: Props)
 
                 <div className="grid gap-4 py-4">
                     <div className="grid gap-2">
-                        <Label htmlFor="tipo">Tipo</Label>
+                        <Label>Tipo</Label>
                         <Select value={form.tipo} onValueChange={(val) => handleSelectChange('tipo', val)}>
-                            <SelectTrigger id="tipo">
-                                <SelectValue placeholder="Selecione o tipo" />
-                            </SelectTrigger>
+                            <SelectTrigger><SelectValue placeholder="Tipo" /></SelectTrigger>
                             <SelectContent>
                                 <SelectItem value="entrada">Entrada</SelectItem>
                                 <SelectItem value="saida">Saída</SelectItem>
@@ -97,41 +130,40 @@ export default function CriarLancamentoModal({ condominioId, usuarioId }: Props)
                     </div>
 
                     <div className="grid gap-2">
-                        <Label htmlFor="descricao">Descrição</Label>
-                        <Input id="descricao" name="descricao" value={form.descricao} onChange={handleChange} />
+                        <Label>Descrição</Label>
+                        <Input name="descricao" value={form.descricao} onChange={handleChange} />
                     </div>
 
                     <div className="grid gap-2">
-                        <Label htmlFor="valor">Valor</Label>
-                        <Input id="valor" name="valor" type="number" value={form.valor} onChange={handleChange} />
+                        <Label>Valor</Label>
+                        <Input name="valor" type="number" value={form.valor} onChange={handleChange} />
                     </div>
 
                     <div className="grid gap-2">
-                        <Label htmlFor="data">Data</Label>
-                        <Input id="data" name="data" type="date" value={form.data} onChange={handleChange} />
+                        <Label>Data</Label>
+                        <Input name="data" type="date" value={form.data} onChange={handleChange} />
                     </div>
 
                     <div className="grid gap-2">
-                        <Label htmlFor="usuario_id">Usuário</Label>
+                        <Label>Usuário</Label>
                         <Select value={form.usuario_id} onValueChange={(val) => handleSelectChange('usuario_id', val)}>
-                            <SelectTrigger id="usuario_id">
-                                <SelectValue placeholder="Selecione um usuário" />
-                            </SelectTrigger>
+                            <SelectTrigger><SelectValue placeholder="Usuário" /></SelectTrigger>
                             <SelectContent>
                                 {usuarios.map((u) => (
-                                    <SelectItem key={u.id} value={u.id}>
-                                        {u.nome}
-                                    </SelectItem>
+                                    <SelectItem key={u.id} value={u.id}>{u.nome}</SelectItem>
                                 ))}
                             </SelectContent>
                         </Select>
                     </div>
+
+                    <div className="grid gap-2">
+                        <Label>Comprovante (PDF)</Label>
+                        <Input type="file" accept="application/pdf" onChange={handleFileChange} />
+                    </div>
                 </div>
 
                 <div className="flex justify-end gap-2">
-                    <Button variant="ghost" onClick={() => setOpen(false)}>
-                        Cancelar
-                    </Button>
+                    <Button variant="ghost" onClick={() => setOpen(false)}>Cancelar</Button>
                     <Button onClick={salvarLancamento}>Salvar</Button>
                 </div>
             </DialogContent>

@@ -60,33 +60,46 @@ export default function LancamentosList({ condominioId, acoes = true }: Lancamen
                     <div className="flex flex-col">
                         <span className="font-medium">{l.descricao}</span>
                         <span className="text-sm text-muted-foreground">
-                            {format(new Date(l.data), "dd 'de' MMMM 'de' yyyy", { locale: ptBR })}
-                        </span>
-                        <span>
-                            {l.usuarios.nome}
-                        </span>
+                {format(new Date(l.data), "dd 'de' MMMM 'de' yyyy", { locale: ptBR })}
+            </span>
+                        <span>{l.usuarios.nome}</span>
+
+                        {l.comprovante && (
+                            <a
+                                href={`https://lddbvagjouddwgszyzqe.supabase.co/storage/v1/object/public/comprovantes/${l.comprovante}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="mt-1 text-blue-600 text-sm underline hover:text-blue-800"
+                            >
+                                Visualizar comprovante
+                            </a>
+                        )}
                     </div>
 
                     <div className="text-right">
-                        <span
-                            className={`font-bold ${
-                                l.tipo === 'entrada' ? 'text-green-600' : 'text-red-600'
-                            }`}
-                        >
-                            {new Intl.NumberFormat('pt-BR', {
-                                style: 'currency',
-                                currency: 'BRL',
-                            }).format(l.valor)}
-                        </span>
+            <span
+                className={`font-bold ${
+                    l.tipo === 'entrada' ? 'text-green-600' : 'text-red-600'
+                }`}
+            >
+                {new Intl.NumberFormat('pt-BR', {
+                    style: 'currency',
+                    currency: 'BRL',
+                }).format(l.valor)}
+            </span>
 
                         {acoes && (
                             <div className="flex gap-2 mt-2 justify-end">
-                                <LancamentoExcluirButton lancamentoId={l.id} onLancamentoExcluidoAction={handleLancamentoExcluido} />
+                                <LancamentoExcluirButton
+                                    lancamentoId={l.id}
+                                    onLancamentoExcluidoAction={handleLancamentoExcluido}
+                                />
                             </div>
                         )}
                     </div>
                 </div>
             ))}
+
         </div>
     )
 }
