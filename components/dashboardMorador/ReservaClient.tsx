@@ -21,7 +21,28 @@ interface ReservaClientProps {
 export function ReservaClient({ ambientes, usuarioId }: ReservaClientProps) {
     const [selectedAmbiente, setSelectedAmbiente] = useState<Ambiente | null>(null);
     const [ambientesFiltrados, setAmbientesFiltrados] = useState<Ambiente[]>([]);
+    const [minhasReservas, setMinhasReservas] = useState<any[]>([]);
+
     const supabase = createClient();
+
+    useEffect(() => {
+        const fetchReservas = async () => {
+            const { data, error } = await supabase
+                .from("reservas_ambientes")
+                .select("data_reservada, status, ambiente_id, ambientes(nome)")
+                .eq("usuario_id", usuarioId)
+                .order("data_reservada", { ascending: true });
+
+            if (!error) {
+                setMinhasReservas(data);
+            } else {
+                console.error("Erro ao buscar reservas:", error);
+            }
+        };
+
+        fetchReservas();
+    }, [usuarioId]);
+
 
     useEffect(() => {
         const fetchAmbientes = async () => {
@@ -82,6 +103,54 @@ export function ReservaClient({ ambientes, usuarioId }: ReservaClientProps) {
 
     return (
         <div className="max-w-3xl mx-auto mt-10 space-y-4">
+            {minhasReservas.length > 0 && (
+                <div className="space-y-2">
+                    <h2 className="text-2xl font-semibold">Minhas Reservas</h2>
+                    <Table>
+                        <TableHeader>
+                            <TableRow>
+                                <TableHead>Ambiente</TableHead>
+                                <TableHead>Data</TableHead>
+                                <TableHead>Status</TableHead>
+                            </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                            {minhasReservas.map((reserva, idx) => {
+                                const dataReserva = new Date(reserva.data_reservada);
+                                const hoje = new Date();
+                                hoje.setHours(0, 0, 0, 0); // zera horas
+
+                                let status = "";
+                                let cor = "";
+
+                                if (dataReserva.toDateString() === hoje.toDateString()) {
+                                    status = "É HOJE!";
+                                    cor = "bg-blue-600";
+                                } else if (dataReserva < hoje) {
+                                    status = "Finalizado";
+                                    cor = "bg-red-500";
+                                } else {
+                                    status = "Aprovada";
+                                    cor = "bg-green-600";
+                                }
+
+                                return (
+                                    <TableRow key={idx}>
+                                        <TableCell>{reserva.ambientes?.nome || "Ambiente"}</TableCell>
+                                        <TableCell>{dataReserva.toLocaleDateString("pt-BR")}</TableCell>
+                                        <TableCell>
+                                            <span className={`px-2 py-1 rounded text-white text-sm ${cor}`}>
+                                                {status}
+                                            </span>
+                                                                </TableCell>
+                                                            </TableRow>
+                                                        );
+                                                    })}
+                        </TableBody>
+                    </Table>
+                </div>
+            )}
+
             <h2 className="text-2xl font-semibold">Ambientes Disponíveis</h2>
             <Table>
                 <TableHeader>
