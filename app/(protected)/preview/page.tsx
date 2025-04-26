@@ -28,6 +28,10 @@ export default async function PreviewPage() {
         redirect("/dashboard");
     }
 
+    if (usuario.cargo === "morador" && usuario.condominio_id !== null) {
+        redirect("/dashboardMorador");
+    }
+
     return (
         <div className="w-full min-h-screen flex items-center justify-center px-4 py-20">
             <div className="w-full max-w-2xl space-y-10">

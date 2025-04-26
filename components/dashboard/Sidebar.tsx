@@ -19,7 +19,8 @@ const links = [
 ]
 
 const financeiroLinks = [
-    { href: "/dashboard/financeiro/lancamentos", label: "Lançamentos" },
+    { href: "/dashboard/financeiro/lancamentos/moradores", label: "Lançamentos Morador" },
+    { href: "/dashboard/financeiro/lancamentos/condominio", label: "Lançamentos Condominio" },
     { href: "/dashboard/financeiro/balancete", label: "Balancete Mensal" },
     { href: "/dashboard/financeiro/extrato", label: "Extrato por Morador" },
     { href: "/dashboard/financeiro/comprovantes", label: "Comprovantes e NF" },

@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -12,39 +12,20 @@ import { v4 as uuidv4 } from 'uuid'
 
 interface Props {
     condominioId: string
-    usuarioId: string
 }
 
-export default function CriarLancamentoModal({ condominioId, usuarioId }: Props) {
+export default function CriarLancamentoModal({ condominioId }: Props) {
     const [open, setOpen] = useState(false)
-    const [usuarios, setUsuarios] = useState<{ id: string; nome: string }[]>([])
     const [form, setForm] = useState({
         tipo: 'entrada',
         descricao: '',
         valor: '',
         data: '',
-        usuario_id: '',
+        usuario_id: null,
     })
     const [comprovante, setComprovante] = useState<File | null>(null)
 
     const supabase = createClient()
-
-    useEffect(() => {
-        if (!open) return
-
-        const fetchUsuarios = async () => {
-            const { data, error } = await supabase
-                .from('usuarios')
-                .select('id, nome')
-                .eq('condominio_id', condominioId)
-
-            if (!error && data) {
-                setUsuarios(data)
-            }
-        }
-
-        fetchUsuarios()
-    }, [open, condominioId, supabase])
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setForm({ ...form, [e.target.name]: e.target.value })
@@ -142,18 +123,6 @@ export default function CriarLancamentoModal({ condominioId, usuarioId }: Props)
                     <div className="grid gap-2">
                         <Label>Data</Label>
                         <Input name="data" type="date" value={form.data} onChange={handleChange} />
-                    </div>
-
-                    <div className="grid gap-2">
-                        <Label>Usuário</Label>
-                        <Select value={form.usuario_id} onValueChange={(val) => handleSelectChange('usuario_id', val)}>
-                            <SelectTrigger><SelectValue placeholder="Usuário" /></SelectTrigger>
-                            <SelectContent>
-                                {usuarios.map((u) => (
-                                    <SelectItem key={u.id} value={u.id}>{u.nome}</SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
                     </div>
 
                     <div className="grid gap-2">
