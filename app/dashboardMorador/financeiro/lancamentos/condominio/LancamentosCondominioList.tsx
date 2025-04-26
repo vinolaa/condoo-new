@@ -9,6 +9,7 @@ type Lancamento = {
     id: string
     tipo: "entrada" | "saida"
     descricao: string
+    categoria: string
     valor: number
     data: string
     condominio_id: string
@@ -59,6 +60,11 @@ export default function LancamentosCondominioList({ condominioId }: Props) {
                             >
                                 Visualizar comprovante
                             </a>
+                        )}
+                        {l.categoria && (
+                            <span className="text-sm text-muted-foreground">
+                            Categoria: {l.categoria}
+                        </span>
                         )}
                     </div>
 

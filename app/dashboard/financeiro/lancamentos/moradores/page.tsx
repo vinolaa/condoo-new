@@ -35,6 +35,7 @@ export default async function LancamentosCondominioPage() {
                     <div key={lancamento.id} className="border p-4 rounded shadow-sm space-y-1">
                         <div className="text-sm text-gray-600">{new Date(lancamento.data).toLocaleString()}</div>
                         <div className="font-semibold">{lancamento.descricao}</div>
+                        <div className="text-sm italic text-muted-foreground">{lancamento.categoria}</div>
                         <div className="text-sm">{lancamento.tipo.toUpperCase()} - R$ {lancamento.valor.toFixed(2)}</div>
                         <div className="text-sm">Usuário: {lancamento.usuarios?.nome}</div> {/* Exibindo o nome do usuário */}
                         {lancamento.comprovante && (

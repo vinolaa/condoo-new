@@ -16,9 +16,11 @@ interface Props {
 
 export default function CriarLancamentoModal({ condominioId }: Props) {
     const [open, setOpen] = useState(false)
+    const [categoria, setCategoria] = useState('')
     const [form, setForm] = useState({
         tipo: 'entrada',
         descricao: '',
+        categoria:  '',
         valor: '',
         data: '',
         usuario_id: null,
@@ -114,6 +116,20 @@ export default function CriarLancamentoModal({ condominioId }: Props) {
                         <Label>Descrição</Label>
                         <Input name="descricao" value={form.descricao} onChange={handleChange} />
                     </div>
+
+                    <Select onValueChange={setCategoria}>
+                        <SelectTrigger>
+                            <SelectValue placeholder="Selecione uma categoria" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="Manutenção">Manutenção</SelectItem>
+                            <SelectItem value="Limpeza">Limpeza</SelectItem>
+                            <SelectItem value="Água">Água</SelectItem>
+                            <SelectItem value="Luz">Luz</SelectItem>
+                            <SelectItem value="Taxa Condomínio">Taxa Condomínio</SelectItem>
+                            <SelectItem value="Outros">Outros</SelectItem>
+                        </SelectContent>
+                    </Select>
 
                     <div className="grid gap-2">
                         <Label>Valor</Label>

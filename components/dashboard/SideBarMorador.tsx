@@ -20,6 +20,7 @@ const links = [
 const financeiroLinks = [
     { href: "/dashboardMorador/financeiro/lancamentos/moradores", label: "Lançamentos Morador" },
     { href: "/dashboardMorador/financeiro/lancamentos/condominio", label: "Lançamentos Condominio" },
+    { href: "/dashboardMorador/financeiro/balancete", label: "Meu Balancete" },
 ]
 
 export function SidebarMorador() {

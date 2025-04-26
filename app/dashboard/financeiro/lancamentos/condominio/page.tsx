@@ -35,6 +35,7 @@ export default async function LancamentosCondominioPage() {
                     <div key={lancamento.id} className="border p-4 rounded shadow-sm space-y-1">
                         <div className="text-sm text-gray-600">{new Date(lancamento.data).toLocaleString()}</div>
                         <div className="font-semibold">{lancamento.descricao}</div>
+                        <div className="text-sm italic text-muted-foreground">{lancamento.categoria}</div>
                         <div className="text-sm">{lancamento.tipo.toUpperCase()} - R$ {lancamento.valor.toFixed(2)}</div>
                         {lancamento.comprovante && (
                             <a href={`https://lddbvagjouddwgszyzqe.supabase.co/storage/v1/object/public/comprovantes/${lancamento.comprovante}`} target="_blank" rel="noopener noreferrer" className="text-blue-500 text-sm">
