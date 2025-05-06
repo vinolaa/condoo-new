@@ -23,14 +23,15 @@ type Lancamento = {
 
 interface Props {
     condominioId: string
+    usuarioId: string
 }
 
-export default function LancamentosMoradorList({ condominioId }: Props) {
+export default function LancamentosMoradorList({ condominioId, usuarioId }: Props) {
     const [lancamentos, setLancamentos] = useState<Lancamento[]>([])
 
     useEffect(() => {
         const load = async () => {
-            const data = await listarLancamentosMoradores(condominioId)
+            const data = await listarLancamentosMoradores(condominioId, usuarioId)
             setLancamentos(data)
         }
 

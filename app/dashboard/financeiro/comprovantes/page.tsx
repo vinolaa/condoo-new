@@ -66,7 +66,6 @@ export default function ComprovantesNF() {
                                     <TableHead>Data</TableHead>
                                     <TableHead>Categoria</TableHead>
                                     <TableHead>Arquivo</TableHead>
-                                    <TableHead>Ações</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
@@ -79,10 +78,6 @@ export default function ComprovantesNF() {
                                         <TableCell>{comprovante.categoria}</TableCell>
                                         <TableCell>
                                             <a href={comprovante.arquivo} target="_blank" rel="noopener noreferrer" className="text-blue-500">Ver Arquivo</a>
-                                        </TableCell>
-                                        <TableCell>
-                                            <Button size="sm" variant="ghost">Editar</Button>
-                                            <Button size="sm" variant="ghost" className="text-red-500">Excluir</Button>
                                         </TableCell>
                                     </TableRow>
                                 ))}

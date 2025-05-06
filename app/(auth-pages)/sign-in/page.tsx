@@ -54,7 +54,7 @@ export default function Login() {
                 <form className="flex flex-col gap-6" onSubmit={handleSubmit}>
                     <div className="text-center space-y-1">
                         <h1 className="text-3xl font-bold tracking-tight text-foreground">
-                            Bem-vindo de volta
+                            Seja bem vindo
                         </h1>
                         <p className="text-sm text-muted-foreground">
                             Acesse sua conta para continuar

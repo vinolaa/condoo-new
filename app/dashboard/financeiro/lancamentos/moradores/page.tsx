@@ -24,7 +24,7 @@ export default async function LancamentosCondominioPage() {
     return (
         <main className="p-6 space-y-6">
             <div className="flex justify-between items-center">
-                <h1 className="text-2xl font-bold">Lançamentos do Condomínio</h1>
+                <h1 className="text-2xl font-bold">Lançamentos de Moradores</h1>
                 <CriarLancamentoMoradorModal condominioId={usuarioData?.condominio_id} />
             </div>
 

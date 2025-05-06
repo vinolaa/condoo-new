@@ -32,6 +32,7 @@ export default async function LancamentosMoradorPage() {
             <h1 className="text-2xl font-semibold mb-4">Meus Lançamentos</h1>
             <LancamentosMoradorList
                 condominioId={usuarioData.condominio_id}
+                usuarioId={user.id}
             />
         </main>
     )

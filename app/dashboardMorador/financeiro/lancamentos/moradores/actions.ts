@@ -2,7 +2,7 @@
 
 import {createClient} from '@/utils/supabase/server'
 
-export async function listarLancamentosMoradores(condominioId: string) {
+export async function listarLancamentosMoradores(condominioId: string, usuarioId: string) {
     const supabase = await createClient();
 
     const { data, error } = await supabase
@@ -14,7 +14,8 @@ export async function listarLancamentosMoradores(condominioId: string) {
             )
         `)
         .eq('condominio_id', condominioId)
-        .not('usuario_id', 'is', null) // Garante que tenha usuario_id
+        .not('usuario_id', 'is', null)
+        .eq('usuario_id', usuarioId)
         .order('data', { ascending: false });
 
     if (error) throw new Error(error.message);
